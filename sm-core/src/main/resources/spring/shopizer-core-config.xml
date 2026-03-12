@@ -140,6 +140,22 @@
 			</beans:property>
 		</beans:bean>
 	</beans:beans>
+
+	<beans:beans profile="docker">
+		<beans:bean
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<beans:property name="ignoreUnresolvablePlaceholders"
+				value="false" />
+			<beans:property name="locations">
+				<beans:list>
+					<beans:value>classpath:profiles/docker/database.properties</beans:value>
+					<beans:value>classpath:email.properties</beans:value>
+					<beans:value>classpath:profiles/local/shopizer-core.properties</beans:value>
+					<beans:value>classpath:authentication.properties</beans:value>
+				</beans:list>
+			</beans:property>
+		</beans:bean>
+	</beans:beans>
 	
 	<beans:beans profile="mysql">
 		<beans:bean
