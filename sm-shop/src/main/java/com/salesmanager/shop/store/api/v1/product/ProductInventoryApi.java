@@ -20,6 +20,7 @@ import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.catalog.product.inventory.PersistableInventory;
 import com.salesmanager.shop.model.catalog.product.inventory.ReadableInventory;
+import com.salesmanager.shop.model.catalog.product.inventory.ReadableProductStock;
 import com.salesmanager.shop.model.entity.ReadableEntityList;
 import com.salesmanager.shop.store.api.exception.RestApiException;
 import com.salesmanager.shop.store.controller.product.facade.ProductInventoryFacade;
@@ -116,6 +117,18 @@ public class ProductInventoryApi {
 		}
 
 		return productInventoryFacade.get(productId, merchantStore, language, page, count);
+
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = { "/products/{productId}/availability" })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT") })
+	@io.swagger.annotations.ApiOperation(value = "Get product stock availability", notes = "Returns inStock status and quantity for a product")
+	public @ResponseBody ReadableProductStock getAvailability(
+			@PathVariable Long productId,
+			@ApiIgnore MerchantStore merchantStore) {
+
+		return productInventoryFacade.getStock(productId, merchantStore);
 
 	}
 

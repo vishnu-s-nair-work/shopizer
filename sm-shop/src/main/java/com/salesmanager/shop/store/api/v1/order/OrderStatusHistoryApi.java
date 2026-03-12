@@ -42,7 +42,7 @@ public class OrderStatusHistoryApi {
 	@Inject
 	private AuthorizationUtils authorizationUtils;
 
-	@RequestMapping(value = { "private/orders/{id}/history" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/private/orders/{id}/history" }, method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public List<ReadableOrderStatusHistory> list(@PathVariable final Long id, @ApiIgnore MerchantStore merchantStore,
@@ -56,7 +56,7 @@ public class OrderStatusHistoryApi {
 
 	}
 
-	@RequestMapping(value = { "private/orders/{id}/history" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/private/orders/{id}/history" }, method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation(httpMethod = "POST", value = "Add order history", notes = "Adds a new status to an order", produces = "application/json", response = Void.class)
 	@ResponseBody

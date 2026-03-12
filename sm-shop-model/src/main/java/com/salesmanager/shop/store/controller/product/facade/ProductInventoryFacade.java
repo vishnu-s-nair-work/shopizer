@@ -4,9 +4,12 @@ import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.catalog.product.inventory.PersistableInventory;
 import com.salesmanager.shop.model.catalog.product.inventory.ReadableInventory;
+import com.salesmanager.shop.model.catalog.product.inventory.ReadableProductStock;
 import com.salesmanager.shop.model.entity.ReadableEntityList;
 
 public interface ProductInventoryFacade {
+
+  ReadableProductStock getStock(Long productId, MerchantStore store);
 
   ReadableInventory get(Long inventoryId, MerchantStore store, Language language);
  

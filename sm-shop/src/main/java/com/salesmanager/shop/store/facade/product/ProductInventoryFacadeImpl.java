@@ -28,6 +28,7 @@ import com.salesmanager.shop.mapper.inventory.PersistableInventoryMapper;
 import com.salesmanager.shop.mapper.inventory.ReadableInventoryMapper;
 import com.salesmanager.shop.model.catalog.product.inventory.PersistableInventory;
 import com.salesmanager.shop.model.catalog.product.inventory.ReadableInventory;
+import com.salesmanager.shop.model.catalog.product.inventory.ReadableProductStock;
 import com.salesmanager.shop.model.entity.ReadableEntityList;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
@@ -260,6 +261,18 @@ public class ProductInventoryFacadeImpl implements ProductInventoryFacade {
 
 	}
 
+	@Override
+	public ReadableProductStock getStock(Long productId, MerchantStore store) {
+		Validate.notNull(productId, "Product id cannot be null");
+		Validate.notNull(store, "MerchantStore cannot be null");
 
+		Product product = this.getProductById(productId, store);
+
+		int totalQuantity = product.getAvailabilities().stream()
+				.mapToInt(a -> a.getProductQuantity() != null ? a.getProductQuantity() : 0)
+				.sum();
+
+		return new ReadableProductStock(productId, totalQuantity > 0, totalQuantity);
+	}
 
 }
