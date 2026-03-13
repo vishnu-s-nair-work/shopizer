@@ -62,7 +62,21 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 		}
    }
 
-
+	@Override
+	public Product getProductWithAttributes(Long productId) {
+		final String hql = "select distinct p from Product as p " +
+				"left join fetch p.attributes pattr " +
+				"left join fetch pattr.productOption po " +
+				"left join fetch pattr.productOptionValue pov " +
+				"where p.id=:pid";
+		final Query q = this.em.createQuery(hql);
+		q.setParameter("pid", productId);
+		try {
+			return (Product) q.getSingleResult();
+		} catch (NoResultException ignored) {
+			return null;
+		}
+	}
 
 	private Product get(Long productId, MerchantStore merchant) {
 

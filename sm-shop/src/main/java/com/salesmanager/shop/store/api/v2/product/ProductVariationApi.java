@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -121,20 +120,15 @@ public class ProductVariationApi {
       HttpServletResponse response)
       throws Exception {
 
-    Product product = productService.getById(id);
+    List<ReadableProductVariantValue> variants = options.getOptions();
+
+    Product product = productService.getProductWithAttributes(id);
 
     if (product == null) {
       response.sendError(404, "Product not fount for id " + id);
       return null;
     }
 
-    List<ReadableProductVariantValue> ids = options.getOptions();
-
-    if (CollectionUtils.isEmpty(ids)) {
-      return null;
-    }
-    
-    List<ReadableProductVariantValue> variants = options.getOptions();
     List<ProductAttribute> attributes = new ArrayList<ProductAttribute>();
     
     Set<ProductAttribute> productAttributes = product.getAttributes();

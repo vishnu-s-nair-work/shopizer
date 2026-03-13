@@ -62,4 +62,10 @@ public interface ProductRepositoryCustom {
 		List<Product> getProductsForLocale(MerchantStore store,
 				Set<Long> categoryIds, Language language, Locale locale);
 
+		/**
+		 * Lightweight fetch: loads only the product with its attributes (option + option value).
+		 * Use this when only product.getAttributes() is needed (e.g. price variation calculation).
+		 */
+		Product getProductWithAttributes(Long productId);
+
 }

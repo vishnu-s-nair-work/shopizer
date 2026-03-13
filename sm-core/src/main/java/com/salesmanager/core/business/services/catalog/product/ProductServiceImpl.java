@@ -131,6 +131,11 @@ public class ProductServiceImpl extends SalesManagerEntityServiceImpl<Long, Prod
 	}
 
 	@Override
+	public Product getProductWithAttributes(Long productId) {
+		return productRepository.getProductWithAttributes(productId);
+	}
+
+	@Override
 	public List<Product> getProducts(List<Long> categoryIds, Language language) throws ServiceException {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
