@@ -1,13 +1,19 @@
-name: Shopizer Backend CI
+name: Shopizer Backend CI/CD
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/shopizer-backend
 
 jobs:
-  build:
+  ci:
+    name: Test & Build
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -28,4 +34,38 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: shopizer-backend
-          path: sm-shop/target/*.jar
+          path: sm-shop/target/shopizer.jar
+
+  cd:
+    name: Docker Build & Deploy
+    needs: ci
+    # Only deploy on pushes to main (not on PRs)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Self-hosted runner has kubectl access to the local Colima cluster
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: sm-shop/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Update Kubernetes deployment
+        run: |
+          kubectl set image deployment/shopizer-backend \
+            shopizer-backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -n shopizer
+          kubectl rollout status deployment/shopizer-backend -n shopizer --timeout=120s
